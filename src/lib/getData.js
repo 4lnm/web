@@ -45,7 +45,7 @@ export const getSources = async (id, provider, epid, epnum, subdub) => {
         'Content-Type': 'application/json'
       }
     })
-   if (!response.ok) {
+    if (!response.ok) {
       throw new Error('Failed to fetch episodes')
     }
     const data = await response.json();

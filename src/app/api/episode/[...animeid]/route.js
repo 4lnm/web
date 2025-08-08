@@ -1,7 +1,7 @@
-import axios from 'axios';
 import { redis } from '@/lib/rediscache';
-import { NextResponse } from "next/server"
 import { CombineEpisodeMeta } from '@/utils/EpisodeFunctions';
+import axios from 'axios';
+import { NextResponse } from "next/server";
 
 axios.interceptors.request.use(config => {
   config.timeout = 9000;
@@ -69,34 +69,41 @@ async function fetchAnify(id) {
   }
 }
 
+// Assuming you have this from your rateLimiter.js
+import { apiRateLimiter } from '@/lib/rateLimiter';
+
 async function MalSync(id) {
   try {
-    const response = await axios.get(`${process.env.MALSYNC_URI}${id}`);
-
+    // Wrap axios call in the rate limiter enqueue
+    const response = await apiRateLimiter.enqueue(() => axios.get(`${process.env.MALSYNC_URI}${id}`));
+    
     const data = response?.data;
     const sites = Object.keys(data.Sites).map(providerId => ({ providerId: providerId.toLowerCase(), data: Object.values(data.Sites[providerId]) }));
     const newdata = sites.filter(site => site.providerId === 'gogoanime' || site.providerId === 'zoro');
     const finaldata = [];
-    console.log(newdata)
+    
     newdata.forEach(item => {
       const { providerId, data } = item;
       if (providerId === 'gogoanime') {
         const dub = data.find(item => item.title.toLowerCase().endsWith(" (dub)"));
         const duburl = dub?.url?.split('/').pop();
-        const sub = data.find(item => item.title.toLowerCase().includes(" (uncensored)"))?.url?.split('/').pop() ?? data.find((item) => item?.url === dub?.url?.replace(/-dub$/, ''))?.url?.split('/').pop() ?? data.find(item => !item.title.toLowerCase().includes(")"))?.url?.split('/').pop();
+        const sub = data.find(item => item.title.toLowerCase().includes(" (uncensored)"))?.url?.split('/').pop() 
+                  ?? data.find(item => item?.url === dub?.url?.replace(/-dub$/, ''))?.url?.split('/').pop() 
+                  ?? data.find(item => !item.title.toLowerCase().includes(")"))?.url?.split('/').pop();
         finaldata.push({ providerId, sub: sub || "", dub: duburl || "" });
       } else {
-        const sub = data[0]?.url?.split('/').pop()
+        const sub = data[0]?.url?.split('/').pop();
         finaldata.push({ providerId, sub: sub || '' });
       }
     });
-    console.log(finaldata)
+
     return finaldata;
   } catch (error) {
     console.error('Error fetching data from Malsync:', error);
     return null;
   }
 }
+
 
 async function fetchGogoanime(sub, dub) {
   try {

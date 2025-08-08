@@ -1,7 +1,7 @@
 "use client"; 
 import Navbarcomponent from "@/components/navbar/Navbar";
+import { signIn } from 'next-auth/react';
 import { useRouter } from 'next-nprogress-bar';
-import { useSession, signIn, signOut } from 'next-auth/react';
 
 export default function AuthPage({
 }) {
@@ -39,7 +39,7 @@ export default function AuthPage({
             Discord (Coming soon)
           </button>
           <button className="bg-white text-black font-medium py-2 px-3 rounded-lg"
-           onClick={() => signIn('AniListProvider')}
+          onClick={() => signIn('AniListProvider')}
           >
             AniList
           </button>
