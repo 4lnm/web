@@ -32,24 +32,21 @@ export const getEpisodes = async (id, status, refresh = false) => {
 
 export const getSources = async (id, provider, epid, epnum, subdub) => {
   try {
-    const episodeId = encodeURIComponent(epid);
-    const category = subdub.toLowerCase(); // "sub" or "dub"
-    const server = "hd-1"; // you can change this if needed
-
-    const url = `${checkEnvironment()}/api/v2/hianime/episode/sources?animeEpisodeId=${episodeId}&ep=${epnum}&server=${server}&category=${category}`;
-
-    const response = await fetch(url, {
-      cache: "no-store"
-    });
+    const response = await fetch(
+      `https://api.consumet.org/anime/animepahe/watch/${epid}`,
+      {
+        cache: "no-store"
+      }
+    );
 
     if (!response.ok) {
-      throw new Error("Failed to fetch Zoro episode sources");
+      throw new Error("Failed to fetch AnimePahe episode sources");
     }
 
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error("Error fetching Zoro episode sources:", error);
+    console.error("Error fetching AnimePahe episode sources:", error);
     return null;
   }
 };
