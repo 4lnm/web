@@ -29,5 +29,5 @@
         this.isProcessing = false;
     }
     }
- //test
-    export const apiRateLimiter = new RateLimiter(10); 
+
+    export const apiRateLimiter = new RateLimiter(3); // 3 req/s
