@@ -1,15 +1,13 @@
-import React from "react";
-import { AnimeInfoAnilist } from '@/lib/Anilistfunctions'
+import Animecards from "@/components/CardComponent/Animecards";
+import DisqusComments from "@/components/comments/DisqusComments";
+import Navbarcomponent from "@/components/navbar/Navbar";
 import NextAiringDate from "@/components/videoplayer/NextAiringDate";
 import PlayerAnimeCard from "@/components/videoplayer/PlayerAnimeCard";
-import Navbarcomponent from "@/components/navbar/Navbar";
 import PlayerComponent from "@/components/videoplayer/PlayerComponent";
-import Animecards from "@/components/CardComponent/Animecards";
+import { AnimeInfoAnilist } from '@/lib/Anilistfunctions';
 import { createWatchEp, getEpisode } from "@/lib/EpHistoryfunctions";
-import DisqusComments from "@/components/comments/DisqusComments";
-import { WatchPageInfo } from "@/lib/AnilistUser";
-import { getAuthSession } from "../../../api/auth/[...nextauth]/route";
 import { redis } from '@/lib/rediscache';
+import { getAuthSession } from "../../../api/auth/[...nextauth]/route";
 
 
 async function getInfo(id) {
@@ -93,8 +91,8 @@ async function AnimeWatch({ params, searchParams }) {
           {data?.status === 'RELEASING' &&
             <NextAiringDate nextAiringEpisode={data?.nextAiringEpisode} />
           }
-           <div className="p-1">
-         <DisqusComments
+          <div className="p-1">
+          <DisqusComments
             key={epId}
             post={{
               id: id,
@@ -104,7 +102,7 @@ async function AnimeWatch({ params, searchParams }) {
               
             }}
           />
-         </div>
+          </div>
         </div>
         <div className="h-full lg:flex lg:flex-col md:max-lg:w-full gap-10">
         <div className="rounded-lg hidden lg:block lg:max-w-[280px] xl:max-w-[380px] w-[100%] xl:overflow-y-scroll xl:overflow-x-hidden overflow-hidden scrollbar-hide overflow-y-hidden">
