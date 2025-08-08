@@ -31,7 +31,7 @@ function PlayerComponent({ id, epId, provider, epNum, subdub, data, session, sav
             setError(false);
             setLoading(true);
             try {
-                const response = await getSources(id, provider, epId, epNum, subdub);
+                const response = await getSources(id, epNum, subdub);
                 if (!response?.sources || response.sources.length === 0) {
                     toast.error("No episode sources found.");
                     setError(true);
