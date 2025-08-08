@@ -52,7 +52,7 @@ function PlayerComponent({ id, epId, provider, epNum, subdub, data, session, sav
                     return;
                 }
 
-                setSrc(sources);
+                setSrc(`https://rust-proxy-production.up.railway.app/?url=${sources}`);
                 const download = response?.download;
 
                 let subtitlesArray = response.tracks || response.subtitles;
