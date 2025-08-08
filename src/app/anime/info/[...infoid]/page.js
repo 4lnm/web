@@ -4,7 +4,7 @@ import { AnimeInfoAnilist } from '@/lib/Anilistfunctions'
 import { redis } from '@/lib/rediscache'
 import DetailsContainer from './DetailsContainer'
 
-import { apiRateLimiter } from '@/lib/ratelimiter'; // ✅ Add this line
+import { apiRateLimiter } from '@/lib/rateLimiter'; // ✅ Add this line
 
 
   if (!apiRateLimiter || !apiRateLimiter.enqueue) {
