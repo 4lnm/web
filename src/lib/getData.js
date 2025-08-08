@@ -32,21 +32,18 @@ export const getEpisodes = async (id, status, refresh = false) => {
 
 export const getSources = async (id, provider, epid, epnum, subdub) => {
   try {
-    const response = await fetch(
-      `https://api-consumet-lo87oc0ul-4lnms-projects.vercel.app/anime/animepahe/watch/${epid}`,
-      {
-        cache: "no-store"
-      }
-    );
+    const baseUrl = "https://aw-api.vercel.app/api/v2/hianime/episode/sources";
+
+    const url = `${baseUrl}?animeEpisodeId=${encodeURIComponent(epid)}&ep=${encodeURIComponent(epnum)}&server=hd-1&category=${encodeURIComponent(subdub)}`;
+
+    const response = await fetch(url);
 
     if (!response.ok) {
-      throw new Error("Failed to fetch AnimePahe episode sources");
+      throw new Error('Failed to fetch episode sources');
     }
 
-    const data = await response.json();
-    return data;
+    return await response.json();
   } catch (error) {
-    console.error("Error fetching AnimePahe episode sources:", error);
-    return null;
+    console.error("Error fetching Episode sources:", error);
   }
 };
