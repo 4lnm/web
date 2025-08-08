@@ -32,26 +32,24 @@ export const getEpisodes = async (id, status, refresh = false) => {
 
 export const getSources = async (id, provider, epid, epnum, subdub) => {
   try {
-    const response = await fetch(`${checkEnvironment()}/api/source/${id}`,{
-      method: 'POST',
-      body: JSON.stringify({
-        source : provider === 'gogoanime' || provider === 'gogobackup' ? 'consumet' : 'anify',
-        provider: `${provider === "gogobackup" ? 'gogoanime' : provider}`,
-        episodeid: epid,
-        episodenum: epnum,
-        subtype: subdub
-      }),
-      headers:{
-        'Content-Type': 'application/json'
-      }
-    })
+    const episodeId = encodeURIComponent(epid);
+    const category = subdub.toLowerCase(); // "sub" or "dub"
+    const server = "hd-1"; // you can change this if needed
+
+    const url = `${checkEnvironment()}/api/v2/hianime/episode/sources?animeEpisodeId=${episodeId}&ep=${epnum}&server=${server}&category=${category}`;
+
+    const response = await fetch(url, {
+      cache: "no-store"
+    });
+
     if (!response.ok) {
-      throw new Error('Failed to fetch episodes')
+      throw new Error("Failed to fetch Zoro episode sources");
     }
+
     const data = await response.json();
-    // console.log(data);
     return data;
   } catch (error) {
-    console.error("Error fetching Episode sources:", error);
+    console.error("Error fetching Zoro episode sources:", error);
+    return null;
   }
-    }
+};
