@@ -33,7 +33,7 @@ export const getEpisodes = async (id, status, refresh = false) => {
 export const getSources = async (id, provider, epid, epnum, subdub) => {
   try {
     const response = await fetch(
-      `https://api.consumet.org/anime/animepahe/watch/${epid}`,
+      `https://api-consumet-lo87oc0ul-4lnms-projects.vercel.app/anime/animepahe/watch/${epid}`,
       {
         cache: "no-store"
       }
