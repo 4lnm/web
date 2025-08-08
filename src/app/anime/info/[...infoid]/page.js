@@ -4,13 +4,6 @@ import { AnimeInfoAnilist } from '@/lib/Anilistfunctions';
 import { redis } from '@/lib/rediscache';
 import DetailsContainer from './DetailsContainer';
 
-import { apiRateLimiter } from '@/lib/rateLimiter';
-
-// Ensure rate limiter is properly initialized
-if (!apiRateLimiter || !apiRateLimiter.enqueue) {
-  throw new Error("apiRateLimiter is not initialized or enqueue is missing");
-}
-
 let infoCache = null;
 
 async function getInfo(id) {
@@ -30,7 +23,7 @@ async function getInfo(id) {
     if (cachedData) {
       infoCache = JSON.parse(cachedData);
     } else {
-      const data = await apiRateLimiter.enqueue(() => AnimeInfoAnilist(id));
+      const data = await AnimeInfoAnilist(id);
       const cacheTime = data?.nextAiringEpisode?.episode
         ? 60 * 60 * 2
         : 60 * 60 * 24 * 45;
@@ -45,7 +38,7 @@ async function getInfo(id) {
     return infoCache;
   } catch (error) {
     console.error("Error fetching info:", error);
-    return null; // 🛑 Ensure a defined return on error
+    return null;
   }
 }
 
