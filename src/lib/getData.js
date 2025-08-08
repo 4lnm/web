@@ -30,35 +30,29 @@ export const getEpisodes = async (id, status, refresh = false) => {
   }
 }
 
-export const getSources = async (anilistId, episodeNumber, subOrDub = "sub") => {
+export const getSources = async (anilistId, episodeNumber, subOrDub = "sub", server = "hd-1") => {
   try {
-    // 1. Get anime info (includes episode list)
-    const infoRes = await fetch(`https://hianime-mapper-ivory-five.vercel.app/anime/info/${anilistId}`);
-    if (!infoRes.ok) throw new Error("Failed to fetch anime info");
-    const animeInfo = await infoRes.json();
-    const data = await getSources(21, 2142, "sub");
-    // 2. Find the episode object for the requested episode number
-    const episodeObj = animeInfo.episodes.find(ep => 
+    // 1️⃣ Map AniList ID to HiAnime data (this includes episode list)
+    const mapRes = await fetch(`https://anime-mapper-eight.vercel.app/hianime/${anilistId}`);
+    if (!mapRes.ok) throw new Error("Failed to map AniList ID to HiAnime");
+    const animeData = await mapRes.json();
+
+    // 2️⃣ Find the requested episode
+    const episode = animeData?.hianime?.episodes?.find(ep => 
       parseInt(ep.number) === parseInt(episodeNumber)
     );
-    if (!episodeObj) throw new Error(`Episode ${episodeNumber} not found`);
+    if (!episode) throw new Error(`Episode ${episodeNumber} not found for AniList ID ${anilistId}`);
 
-    const animeEpisodeId = episodeObj.id; // HiAnime's internal episode ID
-    const epNum = episodeObj.number;
+    // 3️⃣ Fetch the sources from mapper’s HiAnime sources endpoint
+    const srcUrl = `https://anime-mapper-eight.vercel.app/hianime/sources/${episode.id}?ep=${encodeURIComponent(episode.number)}&server=${encodeURIComponent(server)}&category=${encodeURIComponent(subOrDub)}`;
+    const sourcesRes = await fetch(srcUrl);
+    if (!sourcesRes.ok) throw new Error("Failed to fetch streaming sources");
 
-    // 3. Build the aw-api URL for sources
-    const baseUrl = "https://aw-api.vercel.app/api/v2/hianime/episode/sources";
-    const url = `${baseUrl}?animeEpisodeId=${encodeURIComponent(animeEpisodeId)}&ep=${encodeURIComponent(epNum)}&server=hd-1&category=${encodeURIComponent(subOrDub)}`;
-
-    // 4. Fetch the episode sources 
-    const sourcesRes = await fetch(url);
-  
-    if (!sourcesRes.ok) throw new Error("Failed to fetch episode sources");
-
+    // 4️⃣ Return the response (includes sources + required headers)
     return await sourcesRes.json();
 
-  } catch (error) {
-    console.error("Error in getSources:", error);
+  } catch (err) {
+    console.error("Error in getSources:", err);
     return null;
   }
 };
