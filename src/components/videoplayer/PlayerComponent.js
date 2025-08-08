@@ -1,19 +1,16 @@
 "use client"
-import React, { useEffect, useState } from 'react'
+import RandomTextComponent from '@/components/RandomTextComponent';
 import { getSources } from '@/lib/getData';
+import { AniListIcon, MyAnimeListIcon } from "@/lib/SvgIcons";
+import { ArrowDownTrayIcon, FlagIcon, InformationCircleIcon, ShareIcon } from "@heroicons/react/24/solid";
+import { Modal, ModalBody, ModalContent, ModalHeader, useDisclosure } from "@nextui-org/react";
+import { Spinner } from '@vidstack/react';
+import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
+import { useStore } from "zustand";
+import { useDataInfo, useNowPlaying, useTitle } from '../../lib/store';
 import PlayerEpisodeList from './PlayerEpisodeList';
 import Player from './VidstackPlayer/player';
-import { Spinner } from '@vidstack/react';
-import { toast } from 'sonner';
-import { useTitle, useNowPlaying, useDataInfo } from '../../lib/store';
-import { useStore } from "zustand";
-import { ShareIcon,InformationCircleIcon,ArrowDownTrayIcon,BookmarkIcon,FlagIcon } from "@heroicons/react/24/solid";
-import { AniListIcon,MyAnimeListIcon } from "@/lib/SvgIcons";
-import { Modal, ModalContent, ModalHeader, ModalBody, Button, useDisclosure } from "@nextui-org/react";
-import Link from 'next/link'
-import { signIn } from 'next-auth/react';
-import Image from 'next/image'
-import RandomTextComponent from '@/components/RandomTextComponent';
 
 
 function PlayerComponent({ id, epId, provider, epNum, subdub, data, session, savedep, list, setList, url }) {
@@ -161,7 +158,7 @@ function PlayerComponent({ id, epId, provider, epNum, subdub, data, session, sav
     }, [episodeData, epId, provider, epNum, subdub]);
 
 
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
     return (
         <div className='xl:w-[99%]'>
