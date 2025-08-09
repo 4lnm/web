@@ -1,4 +1,4 @@
-/* "use client"; // Error components must be Client Components
+"use client"; /* Error components must be Client Components
 import React from 'react';
 import Navbarcomponent from "@/components/navbar/Navbar";
 import { useRouter } from 'next-nprogress-bar';
