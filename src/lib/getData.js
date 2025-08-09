@@ -33,7 +33,6 @@ export const getEpisodes = async (id, status, refresh = false) => {
 export const getSources = async (anilistId, episodeNumber) => {
   console.log("[getSources] Starting source fetch...");
 
-  // 🛑 Step 0: Input validation
   if (!anilistId || isNaN(Number(anilistId))) {
     console.error("❌ Invalid anilistId provided:", anilistId);
     return null;
@@ -44,57 +43,40 @@ export const getSources = async (anilistId, episodeNumber) => {
   }
   console.log(`[getSources] ✅ Input valid. anilistId = ${anilistId}, episodeNumber = ${episodeNumber}`);
 
-  // Helper to wrap target URL with proxy
-  const proxyWrap = (targetUrl) =>
-    `https://rust-proxy-production.up.railway.app/?url=${encodeURIComponent(targetUrl)}`;
-
   try {
-    // 1️⃣ Map AniList ID to AnimePahe
-    console.log("[getSources] Step 1: Mapping AniList ID to AnimePahe...");
-    const mapUrl = proxyWrap(`https://anime-mapper-eight.vercel.app/animepahe/map/${anilistId}`);
-    const mapRes = await fetch(mapUrl);
-    console.log(`[getSources] Mapping request status: ${mapRes.status}`);
+    // Step 1: Get mapping data
+    console.log("[getSources] Step 1: Fetch mapping data...");
+    const mapRes = await fetch(`https://anime-mapper-eight.vercel.app/animepahe/map/${anilistId}`);
+    if (!mapRes.ok) throw new Error("Failed to fetch mapping data");
+    const mapData = await mapRes.json();
 
-    if (!mapRes.ok) throw new Error("❌ Failed to map AniList ID to AnimePahe");
-
-    const animeData = await mapRes.json();
-    console.log("[getSources] Mapping response:", animeData);
-
-    if (!animeData?.data?.episodes || animeData.data.episodes.length === 0) {
-      throw new Error("❌ No episodes found in mapped data");
+    if (!mapData?.animepahe?.episodes || mapData.animepahe.episodes.length === 0) {
+      throw new Error("No episodes found in mapping data");
     }
 
-    // 2️⃣ Check if requested episode exists
-    console.log(`[getSources] Step 2: Checking if episode ${episodeNumber} exists...`);
-    const episodeExists = animeData.data.episodes.some(
-      (ep) => parseInt(ep.number) === parseInt(episodeNumber)
-    );
-
-    if (!episodeExists) {
-      console.warn(`[getSources] ⚠ Episode ${episodeNumber} not found for AniList ID ${anilistId}`);
-      throw new Error(`❌ Episode ${episodeNumber} not found`);
+    // Step 2: Find episode object by number
+    const episodeObj = mapData.animepahe.episodes.find(ep => ep.number === Number(episodeNumber));
+    if (!episodeObj) {
+      throw new Error(`Episode ${episodeNumber} not found`);
     }
-    console.log("[getSources] ✅ Episode exists!");
+    console.log("[getSources] Found episode object:", episodeObj);
 
-    // 3️⃣ Fetch HLS sources
-    console.log("[getSources] Step 3: Fetching HLS sources...");
-    const sourcesUrl = proxyWrap(
-      `https://anime-mapper-eight.vercel.app/animepahe/hls/${anilistId}/${episodeNumber}`
-    );
-    console.log(`[getSources] Fetching from: ${sourcesUrl}`);
+    // Step 3: Fetch streaming sources using episodeId
+    const episodeIdEncoded = encodeURIComponent(episodeObj.episodeId);
+    const sourcesUrl = `https://anime-mapper-eight.vercel.app/animepahe/hls/${episodeIdEncoded}`;
+    console.log(`[getSources] Fetching sources from: ${sourcesUrl}`);
 
     const sourcesRes = await fetch(sourcesUrl);
-    console.log(`[getSources] Sources request status: ${sourcesRes.status}`);
-
-    if (!sourcesRes.ok) throw new Error("❌ Failed to fetch streaming sources");
-
+    if (!sourcesRes.ok) throw new Error("Failed to fetch streaming sources");
     const sourcesData = await sourcesRes.json();
-    console.log("[getSources] ✅ Sources fetched successfully:", sourcesData);
 
+    console.log("[getSources] Sources data:", sourcesData);
     return sourcesData;
-  } catch (err) {
-    console.error("💥 Error in getSources:", err);
+
+  } catch (error) {
+    console.error("Error in getSources:", error);
     return null;
   }
 };
+
 
