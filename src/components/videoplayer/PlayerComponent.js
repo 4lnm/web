@@ -31,41 +31,43 @@ function PlayerComponent({ id, epId, provider, epNum, subdub, data, session, sav
             setError(false);
             setLoading(true);
             try {
-                const response = await getSources(id, epNum, subdub);
-                if (!response?.sources || response.sources.length === 0) {
+                const response = await getSources(id, epNum);
+
+                if (!response?.sources?.sources || response.sources.sources.length === 0) {
                     toast.error("No episode sources found.");
                     setError(true);
                     setLoading(false);
                     return;
                 }
 
-                const sources =
-                    response?.sources?.find(i => i.quality === "default" || i.quality === "auto")?.url ||
-                    response?.sources?.find(i => i.quality === "1080p")?.url ||
-                    response?.sources?.find(i => i.type === "hls")?.url ||
-                    null;
+                // Filter sources by sub/dub using isDub flag
+                const filteredSources = response.sources.sources.filter(source =>
+                    subdub === "dub" ? source.isDub : !source.isDub
+                );
 
-                if (!sources) {
+                // Pick preferred source by quality
+                const preferredSource =
+                    filteredSources.find(i => i.quality.includes("1080p")) ||
+                    filteredSources.find(i => i.quality.includes("720p")) ||
+                    filteredSources[0] || null;
+
+                if (!preferredSource) {
                     toast.error("No valid video source found.");
                     setError(true);
                     setLoading(false);
                     return;
                 }
 
-                setSrc(`https://rust-proxy-production.up.railway.app/?url=${sources}`);
-                const download = response?.download;
+                setSrc(`https://rust-proxy-production.up.railway.app/?url=${preferredSource.url}`);
 
-                let subtitlesArray = response.tracks || response.subtitles;
-                const reFormSubtitles = subtitlesArray?.map((i) => ({
-                    src: i?.file || i?.url,
-                    label: i?.label || i?.lang,
-                    kind: i?.kind || (i?.lang === "Thumbnails" ? "thumbnails" : "subtitles"),
-                    default: i?.default || (i?.lang === "English"),
-                }));
+                // Download links
+                const download = response.sources.download || null;
 
-                setSubtitles(reFormSubtitles?.filter((s) => s.kind !== 'thumbnails'));
-                setThumbnails(reFormSubtitles?.filter((s) => s.kind === 'thumbnails'));
+                // No subtitles/thumbnails from AnimePahe /hls endpoint, so clear them
+                setSubtitles(null);
+                setThumbnails(null);
 
+                // Fetch skip times from aniskip API
                 const skipResponse = await fetch(
                     `https://api.aniskip.com/v2/skip-times/${data?.idMal}/${parseInt(epNum)}?types[]=ed&types[]=mixed-ed&types[]=mixed-op&types[]=op&types[]=recap&episodeLength=`
                 );
@@ -163,7 +165,17 @@ function PlayerComponent({ id, epId, provider, epNum, subdub, data, session, sav
                 <div className='mb-2'>
                     {!loading && !error ? (
                         <div className='h-full w-full aspect-video overflow-hidden'>
-                            <Player dataInfo={data} id={id} groupedEp={groupedEp} session={session} savedep={savedep} src={src} subtitles={subtitles} thumbnails={thumbnails} skiptimes={skiptimes} />
+                            <Player
+                                dataInfo={data}
+                                id={id}
+                                groupedEp={groupedEp}
+                                session={session}
+                                savedep={savedep}
+                                src={src}
+                                subtitles={subtitles}
+                                thumbnails={thumbnails}
+                                skiptimes={skiptimes}
+                            />
                         </div>
                     ) : (
                         <div className="h-full w-full rounded-[8px] relative flex items-center text-xl justify-center aspect-video border border-solid border-white border-opacity-10">
@@ -208,26 +220,24 @@ function PlayerComponent({ id, epId, provider, epNum, subdub, data, session, sav
                         <a onClick={handleShareClick} className="bg-[#1a1a1f] text-white px-2 py-1 rounded-md">
                             <ShareIcon className="w-7 h-7" />
                         </a>
-                        <>
-                            <a className="bg-[#1a1a1f] text-white px-2 py-1 rounded-md" onClick={onOpen}><FlagIcon className="w-7 h-7" /></a>
-                            <Modal backdrop='blur' isOpen={isOpen} onOpenChange={onOpenChange} size={"2xl"} placement="center">
-                                <ModalContent>
-                                    {() => (
-                                        <>
-                                            <ModalHeader className="flex flex-col gap-0">Troubleshooting: Episode fails to load</ModalHeader>
-                                            <ModalBody>
-                                                <iframe
-                                                    title="Troubleshoot"
-                                                    className='w-[520px] h-[650px] mb-4 scrollable-container'
-                                                    src={`https://1anime.tawk.help/article/no-episodes`}
-                                                    frameBorder="0"
-                                                ></iframe>
-                                            </ModalBody>
-                                        </>
-                                    )}
-                                </ModalContent>
-                            </Modal>
-                        </>
+                        <a className="bg-[#1a1a1f] text-white px-2 py-1 rounded-md" onClick={onOpen}><FlagIcon className="w-7 h-7" /></a>
+                        <Modal backdrop='blur' isOpen={isOpen} onOpenChange={onOpenChange} size={"2xl"} placement="center">
+                            <ModalContent>
+                                {() => (
+                                    <>
+                                        <ModalHeader className="flex flex-col gap-0">Troubleshooting: Episode fails to load</ModalHeader>
+                                        <ModalBody>
+                                            <iframe
+                                                title="Troubleshoot"
+                                                className='w-[520px] h-[650px] mb-4 scrollable-container'
+                                                src={`https://1anime.tawk.help/article/no-episodes`}
+                                                frameBorder="0"
+                                            ></iframe>
+                                        </ModalBody>
+                                    </>
+                                )}
+                            </ModalContent>
+                        </Modal>
                     </div>
                 </div>
             </div>
