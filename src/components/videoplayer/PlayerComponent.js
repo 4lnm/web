@@ -5,12 +5,64 @@ import { AniListIcon, MyAnimeListIcon } from "@/lib/SvgIcons";
 import { ArrowDownTrayIcon, FlagIcon, InformationCircleIcon, ShareIcon } from "@heroicons/react/24/solid";
 import { Modal, ModalBody, ModalContent, ModalHeader, useDisclosure } from "@nextui-org/react";
 import { Spinner } from '@vidstack/react';
-import { useEffect, useState } from 'react';
+import Hls from 'hls.js'; // import hls.js
+import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { useStore } from "zustand";
 import { useDataInfo, useNowPlaying, useTitle } from '../../lib/store';
 import PlayerEpisodeList from './PlayerEpisodeList';
-import Player from './VidstackPlayer/player';
+
+// New HlsPlayer component for handling hls.js lifecycle
+function HlsPlayer({ src }) {
+    const videoRef = useRef(null);
+    const hlsRef = useRef(null);
+
+    useEffect(() => {
+        if (!src) return;
+
+        if (videoRef.current) {
+            // Destroy any existing hls instance before creating a new one
+            if (hlsRef.current) {
+                hlsRef.current.destroy();
+                hlsRef.current = null;
+            }
+
+            if (Hls.isSupported()) {
+                const hls = new Hls();
+                hlsRef.current = hls;
+
+                hls.loadSource(src);
+                hls.attachMedia(videoRef.current);
+
+                hls.on(Hls.Events.ERROR, function (event, data) {
+                    console.error('HLS error:', data);
+                });
+            } else if (videoRef.current.canPlayType('application/vnd.apple.mpegurl')) {
+                // Native HLS support (Safari)
+                videoRef.current.src = src;
+            } else {
+                console.error('HLS not supported in this browser');
+            }
+        }
+
+        // Cleanup when src changes or component unmounts
+        return () => {
+            if (hlsRef.current) {
+                hlsRef.current.destroy();
+                hlsRef.current = null;
+            }
+        };
+    }, [src]);
+
+    return (
+        <video
+            ref={videoRef}
+            controls
+            autoPlay
+            style={{ width: '100%', height: '100%' }}
+        />
+    );
+}
 
 function PlayerComponent({ id, epId, provider, epNum, subdub, data, session, savedep, list, setList, url }) {
     const [openlist, setOpenlist] = useState(false);
@@ -165,17 +217,8 @@ function PlayerComponent({ id, epId, provider, epNum, subdub, data, session, sav
                 <div className='mb-2'>
                     {!loading && !error ? (
                         <div className='h-full w-full aspect-video overflow-hidden'>
-                            <Player
-                                dataInfo={data}
-                                id={id}
-                                groupedEp={groupedEp}
-                                session={session}
-                                savedep={savedep}
-                                src={src}
-                                subtitles={subtitles}
-                                thumbnails={thumbnails}
-                                skiptimes={skiptimes}
-                            />
+                            {/* Replace Player with HlsPlayer */}
+                            <HlsPlayer src={src} />
                         </div>
                     ) : (
                         <div className="h-full w-full rounded-[8px] relative flex items-center text-xl justify-center aspect-video border border-solid border-white border-opacity-10">
