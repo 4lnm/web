@@ -44,10 +44,15 @@ export const getSources = async (anilistId, episodeNumber) => {
   }
   console.log(`[getSources] ✅ Input valid. anilistId = ${anilistId}, episodeNumber = ${episodeNumber}`);
 
+  // Helper to wrap target URL with proxy
+  const proxyWrap = (targetUrl) =>
+    `https://rust-proxy-production.up.railway.app/?url=${encodeURIComponent(targetUrl)}`;
+
   try {
     // 1️⃣ Map AniList ID to AnimePahe
     console.log("[getSources] Step 1: Mapping AniList ID to AnimePahe...");
-    const mapRes = await fetch(`https://anime-mapper-eight.vercel.app/animepahe/map/${anilistId}`);
+    const mapUrl = proxyWrap(`https://anime-mapper-eight.vercel.app/animepahe/map/${anilistId}`);
+    const mapRes = await fetch(mapUrl);
     console.log(`[getSources] Mapping request status: ${mapRes.status}`);
 
     if (!mapRes.ok) throw new Error("❌ Failed to map AniList ID to AnimePahe");
@@ -62,7 +67,7 @@ export const getSources = async (anilistId, episodeNumber) => {
     // 2️⃣ Check if requested episode exists
     console.log(`[getSources] Step 2: Checking if episode ${episodeNumber} exists...`);
     const episodeExists = animeData.data.episodes.some(
-      ep => parseInt(ep.number) === parseInt(episodeNumber)
+      (ep) => parseInt(ep.number) === parseInt(episodeNumber)
     );
 
     if (!episodeExists) {
@@ -73,7 +78,9 @@ export const getSources = async (anilistId, episodeNumber) => {
 
     // 3️⃣ Fetch HLS sources
     console.log("[getSources] Step 3: Fetching HLS sources...");
-    const sourcesUrl = `https://anime-mapper-eight.vercel.app/animepahe/hls/${anilistId}/${episodeNumber}`;
+    const sourcesUrl = proxyWrap(
+      `https://anime-mapper-eight.vercel.app/animepahe/hls/${anilistId}/${episodeNumber}`
+    );
     console.log(`[getSources] Fetching from: ${sourcesUrl}`);
 
     const sourcesRes = await fetch(sourcesUrl);
@@ -85,7 +92,6 @@ export const getSources = async (anilistId, episodeNumber) => {
     console.log("[getSources] ✅ Sources fetched successfully:", sourcesData);
 
     return sourcesData;
-
   } catch (err) {
     console.error("💥 Error in getSources:", err);
     return null;
