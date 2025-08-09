@@ -66,7 +66,7 @@ export const getSources = async (anilistId, episodeNumber) => {
 
     // Step 3: Fetch streaming sources using episodeId via proxy
     const episodeIdEncoded = encodeURIComponent(episodeObj.episodeId);
-    const sourcesUrl = `https://anime-mapper-eight.vercel.app/animepahe/hls/${episodeIdEncoded}`;
+    const sourcesUrl = `https://anime-mapper-eight.vercel.app/animepahe/hls/${anilistId}/${episodeNumber}`;
     console.log(`[getSources] Fetching sources from via proxy: ${sourcesUrl}`);
 
     const sourcesRes = await fetch(proxyUrl + encodeURIComponent(sourcesUrl));
