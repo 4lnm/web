@@ -1,9 +1,9 @@
-"use client";
-import React from "react";
+    "use client";
 import { SessionProvider } from "next-auth/react";
 import { AppProgressBar as ProgressBar } from "next-nprogress-bar";
-import "react-loading-skeleton/dist/skeleton.css";
+import React from "react";
 import { SkeletonTheme } from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 import { toast } from 'sonner';
 
 
@@ -26,7 +26,7 @@ export function AuthProvider({ children, session }) {
 
     return (
         <SessionProvider session={session}>
-            <SkeletonTheme baseColor="#18181b" highlightColor="#1e1e24" borderRadius={"0.5rem"}>
+            <SkeletonTheme baseColor="#f300aaff" highlightColor="#e4489eff" borderRadius={"0.5rem"}>
                 {children}
             </SkeletonTheme>
             <ProgressBar

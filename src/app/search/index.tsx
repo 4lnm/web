@@ -1,13 +1,13 @@
-import { Key, useEffect, useRef, useState } from "react";
-import { motion as m } from "framer-motion";
-import Skeleton from "react-loading-skeleton";
-import { useRouter } from "next/router";
-import Link from "next/link";
-import Head from "next/head";
 import Footer from "@/components/Footer";
+import { motion as m } from "framer-motion";
+import Head from "next/head";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { Key, useEffect, useRef, useState } from "react";
+import Skeleton from "react-loading-skeleton";
 
-import Image from "next/image";
-import { aniAdvanceSearch } from "@/lib/anilist/aniAdvanceSearch";
+import { Navbarcomponent } from "@/components/navbar/Navbar";
+import InputSelect from "@/components/search/dropdown/inputSelect";
 import MultiSelector from "@/components/search/dropdown/multiSelector";
 import SingleSelector from "@/components/search/dropdown/singleSelector";
 import {
@@ -20,15 +20,15 @@ import {
   tagsOption,
   yearOptions,
 } from "@/components/search/selection";
-import InputSelect from "@/components/search/dropdown/inputSelect";
-import { Cog6ToothIcon, TrashIcon } from "@heroicons/react/20/solid";
-import useDebounce from "@/utils/useDebounce";
-import { Navbarcomponent } from "@/components/navbar/Navbar";
 import SearchByImage, {
   TraceMoeResultTypes,
 } from "@/components/searchByImage";
+import { aniAdvanceSearch } from "@/lib/anilist/aniAdvanceSearch";
+import useDebounce from "@/utils/useDebounce";
+import { Cog6ToothIcon, TrashIcon } from "@heroicons/react/20/solid";
 import { PlayIcon } from "@heroicons/react/24/outline";
 import { StaticImport } from "next/dist/shared/lib/get-img-props";
+import Image from "next/image";
 
 export async function getServerSideProps(context: any) {
   const { param } = context.query;

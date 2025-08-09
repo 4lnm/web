@@ -33,7 +33,7 @@ function Footer() {
                     <div className="lg:flex lg:justify-between">
                         <div className="mb-6 lg:mb-0 flex flex-col lg:flex-row lg:items-center lg:gap-6">
                             <Link href="/" className="flex items-center w-fit">
-                                <Image src='https://1anime.co/logo.svg' width={50} height={50} className="w-32 h-20 " />
+                                <Image src='' width={50} height={50} className="w-32 h-20 " />
                             </Link>
                             <button className="bg-black text-white font-medium py-2 px-3 rounded-lg">
                                 🟡 Status: GGAnime API (Main Server) down

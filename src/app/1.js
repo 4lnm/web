@@ -1,15 +1,13 @@
 "use server"
 import Animecard from '@/components/CardComponent/Animecards'
-import Herosection from '@/components/home/Herosection'
-import Navbarcomponent from '@/components/navbar/Navbar'
-import { TrendingAnilist, PopularAnilist, Top100Anilist, SeasonalAnilist } from '@/lib/Anilistfunctions'
-import React from 'react'
-import { MotionDiv } from '@/utils/MotionDiv'
-import VerticalList from '@/components/home/VerticalList'
 import ContinueWatching from '@/components/home/ContinueWatching'
+import Herosection from '@/components/home/Herosection'
 import RecentEpisodes from '@/components/home/RecentEpisodes'
-import { getAuthSession } from './api/auth/[...nextauth]/route'
+import VerticalList from '@/components/home/VerticalList'
+import Navbarcomponent from '@/components/navbar/Navbar'
+import { PopularAnilist, SeasonalAnilist, Top100Anilist, TrendingAnilist } from '@/lib/Anilistfunctions'
 import { redis } from '@/lib/rediscache'
+import { getAuthSession } from './api/auth/[...nextauth]/route'
 // import { getWatchHistory } from '@/lib/EpHistoryfunctions'
 
 async function getHomePage() {
@@ -71,7 +69,7 @@ async function Home() {
             {/* AD HERE */}
             <div className="ad-container">
             <a href="https://dsc.gg/1anime">
-              <img src="https://1anime.co/announcement.gif" alt="Warning: AniList is saying goodbye" className="ad-image" />
+              <img src="" alt="Warning: AniList is saying goodbye" className="ad-image" />
             </a>
           </div>
           <Animecard data={herodata} cardid="Trending Now" />

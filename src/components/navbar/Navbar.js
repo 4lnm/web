@@ -1,19 +1,19 @@
 "use client"
-import React, { useEffect, useState } from 'react';
-import { Modal, ModalContent, ModalHeader, ModalBody, DropdownItem, DropdownTrigger, Dropdown, DropdownMenu, DropdownSection, Avatar, Badge, useDisclosure } from "@nextui-org/react";
-import Link from "next/link"
-import styles from '../../styles/Navbar.module.css'
-import { useSession, signIn, signOut } from 'next-auth/react';
-import { FeedbackIcon, LoginIcon, LogoutIcon, SettingsIcon, ProfileIcon, NotificationIcon } from '@/lib/SvgIcons';
-import { ArrowPathIcon,ClockIcon,ChatBubbleBottomCenterIcon,BookOpenIcon,BanknotesIcon,ChatBubbleOvalLeftEllipsisIcon } from '@heroicons/react/24/outline';
 import { Usernotifications } from '@/lib/AnilistUser';
-import { motion, useScroll, useMotionValueEvent } from 'framer-motion';
-import Feedbackform from './Feedbackform';
+import { useSearchbar, useTitle } from '@/lib/store';
+import { FeedbackIcon, LoginIcon, LogoutIcon, NotificationIcon, ProfileIcon, SettingsIcon } from '@/lib/SvgIcons';
 import { NotificationTime } from '@/utils/TimeFunctions';
-import { useTitle, useSearchbar } from '@/lib/store';
-import { useStore } from 'zustand';
-import Image from 'next/image';
+import { ArrowPathIcon, BanknotesIcon, BookOpenIcon, ChatBubbleBottomCenterIcon, ChatBubbleOvalLeftEllipsisIcon, ClockIcon } from '@heroicons/react/24/outline';
+import { Avatar, Badge, Dropdown, DropdownItem, DropdownMenu, DropdownSection, DropdownTrigger, useDisclosure } from "@nextui-org/react";
+import { motion, useMotionValueEvent, useScroll } from 'framer-motion';
+import { signOut, useSession } from 'next-auth/react';
 import { useRouter } from 'next-nprogress-bar';
+import Image from 'next/image';
+import Link from "next/link";
+import { useEffect, useState } from 'react';
+import { useStore } from 'zustand';
+import styles from '../../styles/Navbar.module.css';
+import Feedbackform from './Feedbackform';
 
 function Navbarcomponent({ home = false }) {
     const animetitle = useStore(useTitle, (state) => state.animetitle);
@@ -125,7 +125,7 @@ function Navbarcomponent({ home = false }) {
                 <div className={styles.logoContainer}>
                     <Link href="/" className={styles.logoLink}>
                         {/* ANIPLAY */}
-                        <Image src='https://1anime.co/logo.svg' width={50} height={50} className="w-32 h-20 "/>
+                        <Image src='' width={50} height={50} className="w-32 h-20 "/>
                     </Link>
                 </div>
                 <div className={styles.navItemsContainer}>

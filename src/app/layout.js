@@ -1,16 +1,16 @@
-import { Inter } from 'next/font/google'
-import './globals.css'
+import { Inter } from 'next/font/google';
+import './globals.css';
 import { NextUiProvider } from "./NextUiProvider";
 // import NextTopLoader from 'nextjs-toploader';
-import Search from '@/components/search/Search'
-import GoToTop from '@/components/GoToTop';
-import localFont from 'next/font/local';
-import Footer from '@/components/Footer';
-import Script from "next/script";
-import { getAuthSession } from './api/auth/[...nextauth]/route';
-import { Toaster } from 'sonner'
-import Changelogs from '../components/Changelogs';
 import FloatingButton from '@/components/FloatingButton';
+import Footer from '@/components/Footer';
+import GoToTop from '@/components/GoToTop';
+import Search from '@/components/search/Search';
+import localFont from 'next/font/local';
+import Script from "next/script";
+import { Toaster } from 'sonner';
+import Changelogs from '../components/Changelogs';
+import { getAuthSession } from './api/auth/[...nextauth]/route';
 import { AuthProvider } from './SessionProvider';
 import ThemeManager from './ThemeManager';
 
@@ -22,7 +22,7 @@ const APP_DEFAULT_TITLE = "1Anime - Watch Anime, Read Manga WITHOUT ADS for FREE
 const APP_DESCRIPTION = "Explore a vast collection of anime on 1Anime, your go-to destination for streaming the latest and classic anime series. Immerse yourself in captivating storylines, vibrant animation, and diverse genres. Discover a world of entertainment at your fingertips with , where every episode is an adventure.";
 
 export const metadata = {
-  metadataBase: new URL('https://1anime.co'),
+  metadataBase: new URL('https://web-chi-two-11.vercel.app/'),
   applicationName: APP_NAME,
   title: APP_DEFAULT_TITLE,
   description: APP_DESCRIPTION,
@@ -110,8 +110,8 @@ export default async function RootLayout({ children }) {
             }}
           />
         <meta name="google-site-verification" content="9Cj5Gd0-OuGDtGb4HpRqNfBXy3FuFCcFNWSvTPOlTzE" />
-        <link rel="apple-touch-icon" sizes="180x180" href="https://1anime.co/apple-touch-icon.png" />
-        <link rel="icon" type="image/png" sizes="192x192" href="https://1anime.co/android-chrome-192x192.png" />
+        <link rel="apple-touch-icon" sizes="180x180" href="" />
+        <link rel="icon" type="image/png" sizes="192x192" href="" />
         {/* <script src="https://kit.fontawesome.com/c189d5d7c5.js" crossOrigin="anonymous" async></script> */}
       </head>
       <body className={myfont.className}>

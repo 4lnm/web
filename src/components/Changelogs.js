@@ -1,7 +1,7 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import { Modal, ModalContent, ModalBody, ModalFooter, Button, useDisclosure } from "@nextui-org/react";
+import { Button, Modal, ModalBody, ModalContent, ModalFooter, useDisclosure } from "@nextui-org/react";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 const newVersion = "Readying for REVAMP - v.1.9"
 
@@ -105,7 +105,7 @@ export default function Changelogs() {
                                             </Link>
                                                 {/* Just a Check */}
                                                 <Link
-                                                href="https://1anime.co"
+                                                href="https://web-chi-two-11.vercel.app/"
                                                 target="_blank"
                                                 className="w-6 h-6 hover:opacity-75"
                                             >

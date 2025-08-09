@@ -1,4 +1,4 @@
-import { TrendingAnilist, Top100Anilist, SeasonalAnilist } from '@/lib/Anilistfunctions';
+import { SeasonalAnilist, Top100Anilist, TrendingAnilist } from '@/lib/Anilistfunctions';
 export default async function sitemap() {
   const data = await TrendingAnilist();
   const data2 = await Top100Anilist();
@@ -6,21 +6,21 @@ export default async function sitemap() {
 
   const trending = data.map((anime)=>{
     return {
-      url: `https://app.1anime.co/anime/info/${anime.id}`,
+      url: `https://web-chi-two-11.vercel.app/${anime.id}`,
       lastModified: new Date(),
     }
   })
 
   const top100 = data2.map((anime)=>{
     return {
-      url: `https://app.1anime.co/anime/info/${anime.id}`,
+      url: `https://web-chi-two-11.vercel.app/${anime.id}`,
       lastModified: new Date(),
     }
   })
 
   const seasonal = data3.map((anime)=>{
     return {
-      url: `https://app.1anime.co/anime/info/${anime.id}`,
+      url: `https://web-chi-two-11.vercel.app/${anime.id}`,
       lastModified: new Date(),
     }
   })
