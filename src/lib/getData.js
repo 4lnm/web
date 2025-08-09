@@ -30,25 +30,24 @@ export const getEpisodes = async (id, status, refresh = false) => {
   }
 }
 
-export const getSources = async (anilistId, episodeNumber, subOrDub = "sub", server = "hd-1") => {
+export const getSources = async (anilistId, episodeNumber, subOrDub = "sub") => {
   try {
-    // 1️⃣ Map AniList ID to HiAnime data (this includes episode list)
-    const mapRes = await fetch(`https://anime-mapper-eight.vercel.app/hianime/${anilistId}`);
-    if (!mapRes.ok) throw new Error("Failed to map AniList ID to HiAnime");
+    // 1️⃣ Map AniList ID to AnimePahe data (includes episode list with episode IDs)
+    const mapRes = await fetch(`https://anime-mapper-eight.vercel.app/animepahe/map/${anilistId}`);
+    if (!mapRes.ok) throw new Error("Failed to map AniList ID to AnimePahe");
     const animeData = await mapRes.json();
 
-    // 2️⃣ Find the requested episode
-    const episode = animeData?.hianime?.episodes?.find(ep => 
-      parseInt(ep.number) === parseInt(episodeNumber)
-    );
+    // 2️⃣ Find the requested episode object from mapped data (assumes episodes array with 'number' and 'id')
+    const episode = animeData?.data?.episodes?.find(ep => parseInt(ep.number) === parseInt(episodeNumber));
     if (!episode) throw new Error(`Episode ${episodeNumber} not found for AniList ID ${anilistId}`);
 
-    // 3️⃣ Fetch the sources from mapper’s HiAnime sources endpoint
-    const srcUrl = `https://anime-mapper-eight.vercel.app/hianime/sources/${episode.id}?ep=${encodeURIComponent(episode.number)}&server=${encodeURIComponent(server)}&category=${encodeURIComponent(subOrDub)}`;
-    const sourcesRes = await fetch(srcUrl);
+    // 3️⃣ Fetch sources using the episode's AnimePahe episode ID and category (sub/dub/raw)
+    // Using /animepahe/sources/:id with query param for subOrDub category if needed
+    const sourcesUrl = `https://anime-mapper-eight.vercel.app/animepahe/sources/${episode.id}?category=${encodeURIComponent(subOrDub)}`;
+    const sourcesRes = await fetch(sourcesUrl);
     if (!sourcesRes.ok) throw new Error("Failed to fetch streaming sources");
 
-    // 4️⃣ Return the response (includes sources + required headers)
+    // 4️⃣ Return sources JSON
     return await sourcesRes.json();
 
   } catch (err) {
