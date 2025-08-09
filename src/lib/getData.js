@@ -30,6 +30,8 @@ export const getEpisodes = async (id, status, refresh = false) => {
   }
 }
 
+const proxyUrl = "https://rust-proxy-production.up.railway.app/?url=";
+
 export const getSources = async (anilistId, episodeNumber) => {
   console.log("[getSources] Starting source fetch...");
 
@@ -44,9 +46,10 @@ export const getSources = async (anilistId, episodeNumber) => {
   console.log(`[getSources] ✅ Input valid. anilistId = ${anilistId}, episodeNumber = ${episodeNumber}`);
 
   try {
-    // Step 1: Get mapping data
-    console.log("[getSources] Step 1: Fetch mapping data...");
-    const mapRes = await fetch(`https://anime-mapper-eight.vercel.app/animepahe/map/${anilistId}`);
+    // Step 1: Get mapping data via proxy
+    const mapUrl = `https://anime-mapper-eight.vercel.app/animepahe/map/${anilistId}`;
+    console.log("[getSources] Step 1: Fetch mapping data via proxy...");
+    const mapRes = await fetch(proxyUrl + encodeURIComponent(mapUrl));
     if (!mapRes.ok) throw new Error("Failed to fetch mapping data");
     const mapData = await mapRes.json();
 
@@ -61,12 +64,12 @@ export const getSources = async (anilistId, episodeNumber) => {
     }
     console.log("[getSources] Found episode object:", episodeObj);
 
-    // Step 3: Fetch streaming sources using episodeId
+    // Step 3: Fetch streaming sources using episodeId via proxy
     const episodeIdEncoded = encodeURIComponent(episodeObj.episodeId);
     const sourcesUrl = `https://anime-mapper-eight.vercel.app/animepahe/hls/${episodeIdEncoded}`;
-    console.log(`[getSources] Fetching sources from: ${sourcesUrl}`);
+    console.log(`[getSources] Fetching sources from via proxy: ${sourcesUrl}`);
 
-    const sourcesRes = await fetch(sourcesUrl);
+    const sourcesRes = await fetch(proxyUrl + encodeURIComponent(sourcesUrl));
     if (!sourcesRes.ok) throw new Error("Failed to fetch streaming sources");
     const sourcesData = await sourcesRes.json();
 
@@ -78,5 +81,3 @@ export const getSources = async (anilistId, episodeNumber) => {
     return null;
   }
 };
-
-
