@@ -43,7 +43,7 @@ export const getSources = async (anilistId, episodeNumber, subOrDub = "sub") => 
 
     // 3️⃣ Fetch sources using the episode's AnimePahe episode ID and category (sub/dub/raw)
     // Using /animepahe/sources/:id with query param for subOrDub category if needed
-    const sourcesUrl = `https://anime-mapper-eight.vercel.app/animepahe/sources/${episode.id}?category=${encodeURIComponent(subOrDub)}`;
+    const sourcesUrl = `https://anime-mapper-eight.vercel.app/animepahe/hls/${anilistId}/${episodeNumber}`;
     const sourcesRes = await fetch(sourcesUrl);
     if (!sourcesRes.ok) throw new Error("Failed to fetch streaming sources");
 
